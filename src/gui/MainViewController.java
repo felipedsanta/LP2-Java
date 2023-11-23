@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import model.services.DepartmentService;
 import model.services.PersonService;
 import model.services.SellerService;
+import model.services.StoreService;
 
 public class MainViewController implements Initializable {
 
@@ -30,6 +31,9 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	private MenuItem menuItemPerson;
+	
+	@FXML
+	private MenuItem menuItemStore;
 
 	@FXML
 	private MenuItem menuItemAbout;
@@ -54,6 +58,14 @@ public class MainViewController implements Initializable {
 	public void onMenuItemDepartmentAction() {
 		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
 			controller.setDepartmentService(new DepartmentService());
+			controller.updateTableView();
+		});
+	}
+	
+	@FXML
+	public void onMenuItemStoreAction() {
+		loadView("/gui/StoreList.fxml", (StoreListController controller) -> {
+			controller.setStoreService(new StoreService());
 			controller.updateTableView();
 		});
 	}
