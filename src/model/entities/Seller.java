@@ -12,14 +12,17 @@ public class Seller extends Person implements Serializable, Trabalhador {
 	private String email;
 	private Double baseSalary;
 	private Department department;
+	private Store store;
+	//private Double Bonus;
 
 	public Seller() {
 	}
 
-	public Seller(String email, Double baseSalary, Department department) {
+	public Seller(String email, Double baseSalary, Department department, Store store) {
 		this.email = email;
 		this.baseSalary = baseSalary;
 		this.department = department;
+		this.store = store;
 	}
 
 	public String getEmail() {
@@ -47,6 +50,14 @@ public class Seller extends Person implements Serializable, Trabalhador {
 	}
 
 	
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -70,7 +81,7 @@ public class Seller extends Person implements Serializable, Trabalhador {
 
 	@Override
 	public String toString() {
-		return "Seller [email=" + email + ", baseSalary=" + baseSalary + ", department=" + department +"]";
+		return "Seller [email=" + email + ", baseSalary=" + baseSalary + ", department=" + department + ", store=" + store + "]";
 	}
 
 	@Override

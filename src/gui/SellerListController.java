@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import model.entities.Seller;
 import model.services.DepartmentService;
 import model.services.SellerService;
+import model.services.StoreService;
 
 public class SellerListController implements Initializable, DataChangeListener {
 
@@ -114,7 +115,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 
 			SellerFormController controller = loader.getController();
 			controller.setSeller(obj);
-			controller.setServices(new SellerService(), new DepartmentService());
+			controller.setServices(new SellerService(), new DepartmentService(), new StoreService());
 			controller.loadAssociatedObjects();
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
