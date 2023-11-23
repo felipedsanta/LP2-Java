@@ -1,24 +1,23 @@
 package model.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
-public class Employee implements Serializable {
+public class Person implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
 	private String name;
-	private Double baseSalary;
-	private Department department;
+	private Date birthDate;
 
-	public Employee() {
+	public Person() {
 	}
 
-	public Employee(Integer id, String name,Double baseSalary, Department department) {
+	public Person(Integer id, String name,Date birthDate) {
 		this.id = id;
 		this.name = name;
-		this.baseSalary = baseSalary;
-		this.department = department;
+		this.birthDate = birthDate;
 	}
 
 	public Integer getId() {
@@ -33,24 +32,16 @@ public class Employee implements Serializable {
 		return name;
 	}
 	
-	public Double getBaseSalary() {
-		return baseSalary;
+	public Date getBirthDate() {
+		return birthDate;
 	}
 
-	public void setBaseSalary(Double baseSalary) {
-		this.baseSalary = baseSalary;
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Department getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(Department department) {
-		this.department = department;
 	}
 
 	@Override
@@ -69,7 +60,7 @@ public class Employee implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Employee other = (Employee) obj;
+		Person other = (Person) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -80,6 +71,6 @@ public class Employee implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Employee [id=" + id + ", name=" + name + ", baseSalary=" + baseSalary + ", department=" + department + "]";
+		return "Person [id=" + id + ", name=" + name + ", birthDate=" + birthDate + "]";
 	}
 }

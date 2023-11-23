@@ -1,8 +1,13 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -12,32 +17,23 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.util.Callback;
-import model.entities.Department;
-import model.entities.Employee;
+import model.entities.Person;
 import model.exceptions.ValidationException;
-import model.services.DepartmentService;
-import model.services.EmployeeService;
+import model.services.PersonService;
 
-public class EmployeeFormController implements Initializable {
+public class PersonFormController implements Initializable {
 
-	private Employee entity;
+	private Person entity;
 
-	private EmployeeService service;
-
-	private DepartmentService departmentService;
+	private PersonService service;
 
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
@@ -48,16 +44,13 @@ public class EmployeeFormController implements Initializable {
 	private TextField txtName;
 
 	@FXML
-	private TextField txtBaseSalary;
+	private DatePicker dpBirthDate;
 
 	@FXML
 	private Label labelErrorName;
 
 	@FXML
-	private Label labelErrorBaseSalary;
-
-	@FXML
-	private ComboBox<Department> comboBoxDepartment;
+	private Label labelErrorBirthDate;
 
 	@FXML
 	private Button btSave;
@@ -65,15 +58,12 @@ public class EmployeeFormController implements Initializable {
 	@FXML
 	private Button btCancel;
 
-	private ObservableList<Department> obsList;
-
-	public void setEmployee(Employee entity) {
+	public void setPerson(Person entity) {
 		this.entity = entity;
 	}
 
-	public void setServices(EmployeeService service, DepartmentService departmentService) {
+	public void setServices(PersonService service) {
 		this.service = service;
-		this.departmentService = departmentService;
 	}
 
 	public void subscribeDataChangeListener(DataChangeListener listener) {
@@ -91,7 +81,7 @@ public class EmployeeFormController implements Initializable {
 		try {
 			entity = getFormData();
 			service.saveOrUpdate(entity);
-			nnotifyDataChangeListeners();
+			notifyDataChangeListeners();
 			Utils.currentStage(event).close();
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
@@ -100,14 +90,14 @@ public class EmployeeFormController implements Initializable {
 		}
 	}
 
-	private void nnotifyDataChangeListeners() {
+	private void notifyDataChangeListeners() {
 		for (DataChangeListener listener : dataChangeListeners) {
 			listener.onDataChanged();
 		}
 	}
 
-	private Employee getFormData() {
-		Employee obj = new Employee();
+	private Person getFormData() {
+		Person obj = new Person();
 
 		ValidationException exception = new ValidationException("Validation error");
 
@@ -118,12 +108,12 @@ public class EmployeeFormController implements Initializable {
 		}
 		obj.setName(txtName.getText());
 
-		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
-			exception.addError("baseSalary", "O campo não pode ser vazio");
+		if (dpBirthDate.getValue() == null) {
+			exception.addError("birthDate", "O campo não pode ser vazio");
+		} else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			obj.setBirthDate(Date.from(instant));
 		}
-		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
-		
-		obj.setDepartment(comboBoxDepartment.getValue());
 
 		if (exception.getErrors().size() > 0) {
 			throw exception;
@@ -145,9 +135,7 @@ public class EmployeeFormController implements Initializable {
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
 		Constraints.setTextFieldMaxLength(txtName, 70);
-		Constraints.setTextFieldDouble(txtBaseSalary);
-
-		initializeComboBoxDepartment();
+		Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
 	}
 
 	public void updateFormData() {
@@ -156,42 +144,18 @@ public class EmployeeFormController implements Initializable {
 		}
 		txtId.setText(String.valueOf(entity.getId()));
 		txtName.setText((entity.getName()));
-		txtBaseSalary.setText(String.format("%.2f", entity.getBaseSalary()));
-		if (entity.getDepartment() == null) {
-			comboBoxDepartment.getSelectionModel().selectFirst();
-		} else {
-			comboBoxDepartment.setValue(entity.getDepartment());
+		Locale.setDefault(Locale.US);
+		if (entity.getBirthDate() != null) {
+			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
 		}
-
-	}
-
-	public void loadAssociatedObjects() {
-		if (departmentService == null) {
-			throw new IllegalStateException("DepartmentService was null");
-		}
-		List<Department> list = departmentService.findAll();
-		obsList = FXCollections.observableArrayList(list);
-		comboBoxDepartment.setItems(obsList);
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 
 		labelErrorName.setText((fields.contains("name") ? errors.get("name") : ""));
-		labelErrorBaseSalary.setText((fields.contains("baseSalary") ? errors.get("baseSalary") : ""));
-		
-	}
+		labelErrorBirthDate.setText((fields.contains("birthDate") ? errors.get("birthDate") : ""));
 
-	private void initializeComboBoxDepartment() {
-		Callback<ListView<Department>, ListCell<Department>> factory = lv -> new ListCell<Department>() {
-			@Override
-			protected void updateItem(Department item, boolean empty) {
-				super.updateItem(item, empty);
-				setText(empty ? "" : item.getName());
-			}
-		};
-		comboBoxDepartment.setCellFactory(factory);
-		comboBoxDepartment.setButtonCell(factory.call(null));
 	}
 
 }

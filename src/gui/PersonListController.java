@@ -30,51 +30,44 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import model.entities.Employee;
-import model.services.DepartmentService;
-import model.services.EmployeeService;
+import model.entities.Person;
+import model.services.PersonService;
 
-public class EmployeeListController implements Initializable, DataChangeListener {
+public class PersonListController implements Initializable, DataChangeListener {
 
-	private EmployeeService service;
-
-	@FXML
-	private TableView<Employee> tableViewEmployee;
+	private PersonService service;
 
 	@FXML
-	private TableColumn<Employee, Integer> tableColumnId;
+	private TableView<Person> tableViewPerson;
 
 	@FXML
-	private TableColumn<Employee, String> tableColumnName;
+	private TableColumn<Person, Integer> tableColumnId;
+
+	@FXML
+	private TableColumn<Person, String> tableColumnName;
 	
 	@FXML
-	private TableColumn<Employee, String> tableColumnEmail;
-	
-	@FXML
-	private TableColumn<Employee, Date> tableColumnBirthDate;
-	
-	@FXML
-	private TableColumn<Employee, Double> tableColumnBaseSalary;
+	private TableColumn<Person, Date> tableColumnBirthDate;
 
 	@FXML
-	private TableColumn<Employee, Employee> tableColumnEDIT;
+	private TableColumn<Person, Person> tableColumnEDIT;
 
 	@FXML
-	private TableColumn<Employee, Employee> tableColumnREMOVE;
+	private TableColumn<Person, Person> tableColumnREMOVE;
 
 	@FXML
 	private Button btNew;
 
-	private ObservableList<Employee> obsList;
+	private ObservableList<Person> obsList;
 
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		Employee obj = new Employee();
-		createDialogForm(obj, "/gui/EmployeeForm.fxml", parentStage);
+		Person obj = new Person();
+		createDialogForm(obj, "/gui/PersonForm.fxml", parentStage);
 	}
 
-	public void setEmployeeService(EmployeeService service) {
+	public void setPersonService(PersonService service) {
 		this.service = service;
 	}
 
@@ -86,38 +79,37 @@ public class EmployeeListController implements Initializable, DataChangeListener
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-		tableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
-		Utils.formatTableColumnDouble(tableColumnBaseSalary, 2);
+		tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+		Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
 
 		Stage stage = (Stage) Main.getMainScene().getWindow();
-		tableViewEmployee.prefHeightProperty().bind(stage.heightProperty());
+		tableViewPerson.prefHeightProperty().bind(stage.heightProperty());
 	}
 
 	public void updateTableView() {
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		List<Employee> list = service.findAll();
+		List<Person> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
-		tableViewEmployee.setItems(obsList);
+		tableViewPerson.setItems(obsList);
 		initEditButtons();
 		initRemoveButtons();
 	}
 
-	private void createDialogForm(Employee obj, String absoluteName, Stage parentStage) {
+	private void createDialogForm(Person obj, String absoluteName, Stage parentStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
 
-			EmployeeFormController controller = loader.getController();
-			controller.setEmployee(obj);
-			controller.setServices(new EmployeeService(), new DepartmentService());
-			controller.loadAssociatedObjects();
+			PersonFormController controller = loader.getController();
+			controller.setPerson(obj);
+			controller.setServices(new PersonService());
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 
 			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Digite as informações do departamento");
+			dialogStage.setTitle("Digite as informações da pessoa");
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
@@ -136,11 +128,11 @@ public class EmployeeListController implements Initializable, DataChangeListener
 
 	private void initEditButtons() {
 		tableColumnEDIT.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-		tableColumnEDIT.setCellFactory(param -> new TableCell<Employee, Employee>() {
+		tableColumnEDIT.setCellFactory(param -> new TableCell<Person, Person>() {
 			private final Button button = new Button("edit");
 
 			@Override
-			protected void updateItem(Employee obj, boolean empty) {
+			protected void updateItem(Person obj, boolean empty) {
 				super.updateItem(obj, empty);
 				if (obj == null) {
 					setGraphic(null);
@@ -148,18 +140,18 @@ public class EmployeeListController implements Initializable, DataChangeListener
 				}
 				setGraphic(button);
 				button.setOnAction(
-						event -> createDialogForm(obj, "/gui/EmployeeForm.fxml", Utils.currentStage(event)));
+						event -> createDialogForm(obj, "/gui/PersonForm.fxml", Utils.currentStage(event)));
 			}
 		});
 	}
 
 	private void initRemoveButtons() {
 		tableColumnREMOVE.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-		tableColumnREMOVE.setCellFactory(param -> new TableCell<Employee, Employee>() {
+		tableColumnREMOVE.setCellFactory(param -> new TableCell<Person, Person>() {
 			private final Button button = new Button("remove");
 
 			@Override
-			protected void updateItem(Employee obj, boolean empty) {
+			protected void updateItem(Person obj, boolean empty) {
 				super.updateItem(obj, empty);
 				if (obj == null) {
 					setGraphic(null);
@@ -171,7 +163,7 @@ public class EmployeeListController implements Initializable, DataChangeListener
 		});
 	}
 
-	private void removeEntity(Employee obj) {
+	private void removeEntity(Person obj) {
 		Optional<ButtonType> result = Alerts.showConfirmation("Confimation", "Você tem certeza que quer deletar?");
 	
 		if (result.get() == ButtonType.OK) {

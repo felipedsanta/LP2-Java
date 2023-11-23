@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.EmployeeListController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PersonListController">
    <children>
-      <Label text="Registrar Trabalhador">
+      <Label text="Cadastro de Pessoa">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -24,13 +24,13 @@
           <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" text="Novo" />
         </items>
       </ToolBar>
-      <TableView fx:id="tableViewEmployee" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tableViewPerson" prefHeight="200.0" prefWidth="200.0">
         <columns>
           <TableColumn fx:id="tableColumnId" prefWidth="75.0" text="ID" />
           <TableColumn fx:id="tableColumnName" prefWidth="75.0" text="Nome" />
-            <TableColumn fx:id="tableColumnBaseSalary" prefWidth="75.0" text="Salário Base" />
-            <TableColumn fx:id="tableColumnEDIT" prefWidth="75.0" />
-            <TableColumn fx:id="tableColumnREMOVE" prefWidth="75.0" />
+            <TableColumn fx:id="tableColumnBirthDate" prefWidth="121.0" text="Data Nascimento" />
+            <TableColumn fx:id="tableColumnEDIT" prefWidth="68.0" />
+            <TableColumn fx:id="tableColumnREMOVE" prefWidth="68.0" />
         </columns>
       </TableView>
    </children>

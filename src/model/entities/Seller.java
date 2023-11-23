@@ -1,34 +1,25 @@
 package model.entities;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Objects;
 
 import model.interfaces.Trabalhador;
 
-public class Seller extends Employee implements Serializable, Trabalhador {
+public class Seller extends Person implements Serializable, Trabalhador {
 
 	private static final long serialVersionUID = 1L;
 
 	private String email;
-	private Date birthDate;
-	private Boolean status;
+	private Double baseSalary;
+	private Department department;
 
 	public Seller() {
 	}
 
-	public Seller(String email, Date birthDate, Boolean status) {
+	public Seller(String email, Double baseSalary, Department department) {
 		this.email = email;
-		this.birthDate = birthDate;
-		this.status = status;
-	}
-
-	public Boolean getStatus() {
-		return status;
-	}
-
-	public void setStatus(Boolean status) {
-		this.status = status;
+		this.baseSalary = baseSalary;
+		this.department = department;
 	}
 
 	public String getEmail() {
@@ -39,12 +30,20 @@ public class Seller extends Employee implements Serializable, Trabalhador {
 		this.email = email;
 	}
 
-	public Date getBirthDate() {
-		return birthDate;
+	public Double getBaseSalary() {
+		return baseSalary;
 	}
 
-	public void setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
+	public void setBaseSalary(Double baseSalary) {
+		this.baseSalary = baseSalary;
+	}
+	
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 
 	
@@ -52,7 +51,7 @@ public class Seller extends Employee implements Serializable, Trabalhador {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(birthDate, email);
+		result = prime * result + Objects.hash(baseSalary, email);
 		return result;
 	}
 
@@ -65,13 +64,13 @@ public class Seller extends Employee implements Serializable, Trabalhador {
 		if (getClass() != obj.getClass())
 			return false;
 		Seller other = (Seller) obj;
-		return Objects.equals(birthDate, other.birthDate)
+		return Objects.equals(baseSalary, other.baseSalary)
 				&& Objects.equals(email, other.email);
 	}
 
 	@Override
 	public String toString() {
-		return "Seller [email=" + email + ", birthDate=" + birthDate + "]";
+		return "Seller [email=" + email + ", baseSalary=" + baseSalary + ", department=" + department +"]";
 	}
 
 	@Override
